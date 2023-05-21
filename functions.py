@@ -11,7 +11,9 @@ class quantizer:
         self.step = 2 * A / M 
         
     def qbin(self, x):
+
         # return the INDEX of the quantization bin, i.e. an integer in the range [0, M-1]
+
         if np.max(np.abs(x)) > self.clip:
             raise OverflowError
         return (np.floor(x / self.step + 0.5) + self.offset).astype(int)
@@ -55,3 +57,24 @@ def amplitude_sampler(f, T, Q, gd=1000):
             transitions.append(brentq(shifted_f, (n - 1) * T / num_samples, t, args=threshold))
             bins.append(i)
     return np.array(transitions), np.array(bins)
+
+
+class binEnc:
+    # Class to encode the index of the quantization bin into a binary string
+    
+    def __init__(self, NQbits):
+       self.qbits = NQbits 
+
+    def encodeAll(self, bin_index):
+        # Convert to binary string, removing the '0b' prefix
+        # Fill with zeros to have a fixed length of Nqbits
+        binary_list = []
+
+        for i in range(0,len(bin_index)):
+            binary_str = bin(bin_index[i])[2:].zfill(self.qbits) 
+            binary_list.append(binary_str)
+
+        return binary_list
+
+    def bit_extract(bi_list, bit_pos ):
+        return  [bits[bit_pos] for bits in bi_list]
