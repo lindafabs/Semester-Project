@@ -59,9 +59,9 @@ def amplitude_sampler(f, T, Q, gd=1000):
     return np.array(transitions), np.array(bins)
 
 
-class binEnc:
+class binary_encoder:
     # Class to encode the index of the quantization bin into a binary string
-    
+
     def __init__(self, NQbits):
        self.qbits = NQbits 
 
@@ -78,3 +78,9 @@ class binEnc:
 
     def bit_extract(bi_list, bit_pos ):
         return  [bits[bit_pos] for bits in bi_list]
+
+
+def enc(Nqbits):
+    return Nqbits
+
+
