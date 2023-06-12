@@ -1,7 +1,7 @@
 import numpy as np 
 import scipy as sp 
-from scipy import signal
 from scipy.signal import butter,filtfilt
+
 
 class FIR_class: 
 
@@ -9,12 +9,14 @@ class FIR_class:
         self.K = taps
         self.Td = delay
 
+
     def movingAvg(self, x, q_sig, corr):
-        y=np.zeros(len(x)-1)
+    
+        y=np.zeros(len(x))
     
         for k in range(1, self.K):
-            a_k = (1/k)*corr
-            q_delay=np.concatenate((np.zeros( self.Td-1), q_sig[:-k*self.Td]))
+            a_k = (1/self.K)
+            q_delay=np.concatenate((np.zeros( self.Td*k-1), q_sig[:-k*self.Td]))
             y = y + a_k*q_delay  
 
         return y
@@ -30,7 +32,7 @@ class FIR_class:
         return y 
     
     def hamming(self, x, q_sig, corr):
-        y=np.zeros(len(x)-1)
+        y=np.zeros(len(x))
 
         for k in range(1,self.K):
             a_k = ( 0.54 - 0.46 * np.cos((2*np.pi*k)/(self.K-1)))*corr
@@ -56,7 +58,7 @@ class FIR_class:
 #------------------------------------------------------------
 
 
-def butter_lowpass_filter(data, cutoff, fs, order):
+def butter_lowpass_filter(data, cutoff, fs, order, nyq):
     normal_cutoff = cutoff / nyq
     # Get the filter coefficients 
     b, a = butter(order, normal_cutoff, btype='low', analog=False)
