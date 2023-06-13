@@ -11,44 +11,35 @@ class FIR_class:
 
 
     def movingAvg(self, x, q_sig, corr):
-    
+        '''
+
+        :param x:
+        :param q_sig:
+        :param corr:
+        :return:
+        '''
         y=np.zeros(len(x))
-    
         for k in range(1, self.K):
             a_k = (1/self.K)
-            q_delay=np.concatenate((np.zeros( self.Td*k-1), q_sig[:-k*self.Td]))
-            y = y + a_k*q_delay  
-
+            q_delay=np.concatenate((np.zeros( self.Td*k), q_sig[:-k*self.Td]))
+            y = y + a_k*q_delay
         return y
-    
-    def movingAvg_weigth(self, x, q_sig, corr):
-        y=np.zeros(len(x)-1)
 
-        for k in range(1,self.K):
-            a_k = (1/(k*(k+1)))*corr
-            q_delay=np.concatenate((np.zeros(self.Td*k-1), q_sig[:-k*self.Td]))
-   
-            y = y + a_k*q_delay  
-        return y 
-    
     def hamming(self, x, q_sig, corr):
         y=np.zeros(len(x))
 
         for k in range(1,self.K):
             a_k = ( 0.54 - 0.46 * np.cos((2*np.pi*k)/(self.K-1)))*corr
-            q_delay=np.concatenate((np.zeros(self.Td*k-1), q_sig[:-k*self.Td]))
+            q_delay=np.concatenate((np.zeros(self.Td*k), q_sig[:-k*self.Td]))
    
             y = y + a_k*q_delay  
         return y
     
     def bartlet(self, x, q_sig, corr):
         y=np.zeros(len(x)-1)
-
         for k in range(1,self.K):
-            
             a_k = ( (2/self.K) * ((self.K-1)/2 - abs((self.K-1)/2 - k)) )*corr
             q_delay=np.concatenate((np.zeros(self.Td*k-1), q_sig[:-k*self.Td]))
-   
             y = y + a_k*q_delay  
         return y
     
