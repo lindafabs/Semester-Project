@@ -13,3 +13,10 @@ The repository is organized as follows:
 Student: Linda Fabiani\
 Supervisor: Paolo Prandoni - LCAV (paolo.prandoni@epfl.ch)\
 Scientific Assistant Contacts: Pablo Martinez-Nuevo (B&O) PMN@bang-olufsen.dk, Martin Bo Møller (B&O) MIM@Bang-Olufsen.dk
+
+### References
+[1] Y. Tsividis, " Continuous-time digital signal processing.," Electronics Letters, pp. 39(21), p.1., 2003
+[2] Y. Tsividis, "Event-driven data acquisition and continuous-time digital signal processing," IEEE Custom Integrated Circuits Conference 2010, pp. (pp. 1-8),
+2010, September.
+[3] Y. Tsividis, "Event-driven data acquisition and digital signal processing—A tutorial.," IEEE Transactions on Circuits and Systems II: Express Briefs, vol. 57 (8),
+pp. 577-581., 2010.
