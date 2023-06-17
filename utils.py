@@ -21,8 +21,8 @@ def fourier_analysis(x, fsmp_ct):
     n = np.arange(N)
     T = N / fsmp_ct
     freq = n / T
-    #freq = np.fft.fftfreq(len(x_ct), 1 / fs_ct)
 
+    #freq = np.fft.fftfreq(len(x), 1 / fsmp_ct)
     return freq, X
 
 def fourier_plot(freq, X, freq_lim, title):

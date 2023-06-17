@@ -41,7 +41,7 @@ class signals_ex:
 #------------------------------------------------------------
 def test_func(x):
     f0 = 1.2 # Hz
-    return 0.9 * np.sin(2 * np.pi * f0 * x)
+    return 0.9 * np.cos(2 * np.pi * f0 * x)
 
 #------------------------------------------------------------
 # Mid-Tread Quantizer
@@ -154,6 +154,8 @@ class binary_encoder:
         return binary_list
     def bit_extract(bi_list, bit_pos ):
         return  [bits[bit_pos] for bits in bi_list]
+
+
 
 
 
