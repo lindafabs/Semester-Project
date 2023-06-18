@@ -27,7 +27,7 @@ def fourier_analysis(x, fsmp_ct):
 
 def fourier_plot(freq, X, freq_lim, title):
     plt.plot(freq, np.abs(X), 'b')
-    plt.xlabel('Freq (Hz)')
+    plt.xlabel('Freq [Hz]')
     plt.ylabel('FFT Amplitude |X(freq)|')
     plt.xlim(0, freq_lim)
     plt.ylim(0, 1)
