@@ -37,7 +37,7 @@ class signals_ex:
 
 
 #------------------------------------------------------------
-# Test function
+# Test functions
 #------------------------------------------------------------
 def test_func(x):
     f0 = 1.2 # Hz
@@ -139,7 +139,6 @@ def plot_decomposition(pulses, Q, points=1000):
 #------------------------------------------------------------
 class binary_encoder:
     # Class to encode the index of the quantization bin into a binary string
-
     def __init__(self, NQbits):
        self.qbits = NQbits
     def encodeAll(self, bin_index):

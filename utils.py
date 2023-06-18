@@ -12,14 +12,16 @@ def plot_wave(x, y, xlim, ylim, label, col):
     plt.ylabel('Amplitude', fontsize=10)
     plt.grid()
 
-def fourier_analysis(x, fsmp_ct):
+def fourier_analysis(x, fsmp):
+
     # Normalized Fourier transform of simple sine wave
     X=np.fft.fft(x)
     X/=np.abs(X).max()
+
     # Frequency vector
     N = len(X)
     n = np.arange(N)
-    T = N / fsmp_ct
+    T = N / fsmp
     freq = n / T
 
     #freq = np.fft.fftfreq(len(x), 1 / fsmp_ct)
@@ -31,6 +33,7 @@ def fourier_plot(freq, X, freq_lim, title):
     plt.ylabel('FFT Amplitude |X(freq)|')
     plt.xlim(0, freq_lim)
     plt.ylim(0, 1)
+    plt.grid()
     plt.title(title)
 
 
@@ -40,4 +43,16 @@ def fourier_plot_db(freq, X, freq_lim, ylim, title):
     plt.ylabel('FFT Amplitude [dB]')
     plt.xlim(0, freq_lim)
     plt.ylim(ylim, 10)
+    plt.grid()
     plt.title(title)
+
+
+def bitmap_plotter(qbits, matrix, time):
+    for i in range(qbits):
+        plt.plot(time, matrix[i, :] + 2 * i, label='Bit idx: {}'.format(i))
+    y_tick_labels = ['0', '1', '0', '1', '0', '1']
+    plt.yticks([0, 1, 2, 3, 4, 5], y_tick_labels)
+    plt.legend()
+    plt.xlabel('Time [s]')
+    plt.ylim(0, 6)
+    plt.title('Binary encoding of the quantized signal')
