@@ -132,7 +132,8 @@ def plot_decomposition(pulses, Q, points=1000):
     for p in pulses:
         n = np.round((points / T) * np.array(p)).astype(int)
         x[n[0]:n[1]] += 1
-    plt.plot(np.linspace(0, T, points), Q.qvalue(x))
+    plt.plot(np.linspace(0, T, points), Q.qvalue(x), label='Reconstructed quantized')
+    return Q.qvalue(x)
 
 #------------------------------------------------------------
 # Binary encoder
