@@ -27,7 +27,7 @@ class FIR_class:
 
     def hamming(self, x, q_sig, corr):
         y=np.zeros(len(x))
-
+        corr = corr / (self.K / 10)
         for k in range(1,self.K):
             a_k = ( 0.54 - 0.46 * np.cos((2*np.pi*k)/(self.K-1)))*corr
             q_delay=np.concatenate((np.zeros(self.Td*k), q_sig[:-k*self.Td]))
@@ -35,10 +35,11 @@ class FIR_class:
             y = y + a_k*q_delay  
         return y
     
-    def bartlet(self, x, q_sig, corr):
+    def bartlett(self, x, q_sig, corr):
         y=np.zeros(len(x)-1)
+        corr = corr / (self.K / 10)
         for k in range(1,self.K):
-            a_k = ( (2/self.K) * ((self.K-1)/2 - abs((self.K-1)/2 - k)) )*corr
+            a_k = ( (2/self.K) * ((self.K-1)/2 - abs((self.K-1)/2 - k)) )*(corr)
             q_delay=np.concatenate((np.zeros(self.Td*k-1), q_sig[:-k*self.Td]))
             y = y + a_k*q_delay  
         return y

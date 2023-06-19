@@ -78,11 +78,22 @@ def FS(n, t0,t1, T, t, delta):
         F = F + F_tmp
     return F
 
+
+def plot_decomposition(pulses, Q, points, plot):
+    T = max(list(sum(pulses, ())))
+    x = np.zeros(points)
+    for p in pulses:
+        n = np.round((points / T) * np.array(p)).astype(int)
+        x[n[0]:n[1]] += 1
+    if plot:
+        plt.plot(np.linspace(0, T, points), Q.qvalue(x), label='Reconstructed quantized')
+    return Q.qvalue(x)
+
 #------------------------------------------------------------
 # pipe-line of amplitude sampler
 #------------------------------------------------------------
 
-def ampSmp_run(t_range,T,q, test_function):
+def ampSmp_run(t_range,T,q, test_function, plot):
 
     t_inst, q_idx = amplitude_sampler(test_function, T, q)
     pulse_times = functions.decompose(t_inst, q_idx, T)
@@ -94,19 +105,25 @@ def ampSmp_run(t_range,T,q, test_function):
         FS_complete = FS_complete + F_tmp
 
     #plot
+    points = 1000
+    offset = FS_complete - plot_decomposition(pulse_times,q, points, plot)
 
-    offset = FS_complete - functions.plot_decomposition(pulse_times, q)
+    if plot == True:
+        plt.plot(t_range, FS_complete - offset, 'b', label="Fouries series")
+        plt.plot(t_range, test_function(t_range), 'black', label="Original signal")
+        functions.plot_decomposition(pulse_times, q)
+        plt.title("Fourier series reconstruction")
+        plt.legend()
+        plt.grid()
+        plt.show()
 
-    plt.plot(t_range, FS_complete - offset, 'b', label="Fouries series")
-    plt.plot(t_range, test_function(t_range), 'black', label="Original signal")
-    functions.plot_decomposition(pulse_times, q)
-    plt.title("Fourier series reconstruction")
-    plt.legend()
-    plt.grid()
-    plt.show()
+        # Fourier frequency analysis
+        freq_FS, X_FS = utils.fourier_analysis(FS_complete, fsmp=100)
+        plt.figure(figsize=(7, 6))
+        utils.fourier_plot(freq_FS, X_FS, freq_lim=10, title="Frequency spectrum of Fourier sum")
+        plt.show()
 
-    # Fourier frequency analysis
-    freq_FS, X_FS = utils.fourier_analysis(FS_complete, fsmp=100)
-    plt.figure(figsize=(7, 6))
-    utils.fourier_plot(freq_FS, X_FS, freq_lim=10, title="Frequency spectrum of Fourier sum")
-    plt.show()
+
+    return offset
+
+
