@@ -35,7 +35,7 @@ def amplitude_sampler(f, T, Q, gd=1000):
     return np.array(transitions), np.array(bins)
 
 #------------------------------------------------------------
-# Decompose pulses
+# Decompose into pulses
 #------------------------------------------------------------
 def decompose(t, i, T):
     assert t[0] == 0, 'first transition should be at t=0'
@@ -56,6 +56,19 @@ def decompose(t, i, T):
         if on:
             pulses.append((t_start, T))
     return pulses
+
+#------------------------------------------------------------
+# Plot the pulses
+#------------------------------------------------------------
+def plot_decomposition(pulses, Q, points, plot):
+    T = max(list(sum(pulses, ())))
+    x = np.zeros(points)
+    for p in pulses:
+        n = np.round((points / T) * np.array(p)).astype(int)
+        x[n[0]:n[1]] += 1
+    if plot:
+        plt.plot(np.linspace(0, T, points), Q.qvalue(x), label='Reconstructed quantized')
+    return Q.qvalue(x)
 
 #------------------------------------------------------------
 # Fourier series sum
@@ -79,24 +92,14 @@ def FS(n, t0,t1, T, t, delta):
     return F
 
 
-def plot_decomposition(pulses, Q, points, plot):
-    T = max(list(sum(pulses, ())))
-    x = np.zeros(points)
-    for p in pulses:
-        n = np.round((points / T) * np.array(p)).astype(int)
-        x[n[0]:n[1]] += 1
-    if plot:
-        plt.plot(np.linspace(0, T, points), Q.qvalue(x), label='Reconstructed quantized')
-    return Q.qvalue(x)
-
 #------------------------------------------------------------
-# pipe-line of amplitude sampler
+# Pipe-line of amplitude sampler
 #------------------------------------------------------------
 
-def ampSmp_run(t_range,T,q, test_function, plot):
+def ampSmp_run(t_range,T,q, test_function, plot, f_fft):
 
     t_inst, q_idx = amplitude_sampler(test_function, T, q)
-    pulse_times = functions.decompose(t_inst, q_idx, T)
+    pulse_times = decompose(t_inst, q_idx, T)
 
     # Fourier sum
     FS_complete = 0
@@ -118,9 +121,11 @@ def ampSmp_run(t_range,T,q, test_function, plot):
         plt.show()
 
         # Fourier frequency analysis
-        freq_FS, X_FS = utils.fourier_analysis(FS_complete, fsmp=100)
+        freq_FS, X_FS = utils.fourier_analysis(FS_complete, fsmp=f_fft)
         plt.figure(figsize=(7, 6))
         utils.fourier_plot(freq_FS, X_FS, freq_lim=10, title="Frequency spectrum of Fourier sum")
+        #utils.fourier_plot_db(freq_FS, X_FS, freq_lim=10, ylim=-300,title="Frequency spectrum of Fourier sum")
+
         plt.show()
 
 
