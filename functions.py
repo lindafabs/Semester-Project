@@ -159,6 +159,33 @@ def FS(n, t0,t1, T, t, delta):
         F = F + F_tmp
     return F
 
+
+#------------------------------------------------------------
+# Run amplitude sampler
+#------------------------------------------------------------
+def amp_smp(func, T, q, xlim, k, plot):
+
+
+    t_inst, q_idx = amplitude_sampler(func, T, q)
+    pulse_times = decompose(t_inst, q_idx, T)
+    x = np.linspace(0, T, 1000)  # time vector
+
+    FS_complete = 0
+    for i in range(len(pulse_times)):
+        F_tmp = FS(k, pulse_times[i][0], pulse_times[i][1], T, x, q.step * 2)
+        FS_complete = FS_complete + F_tmp
+    #----------------------------------------------------------------
+    off = np.real(FS_complete) - q.quantize(func(x))
+    if plot:
+        plt.plot(x, FS_complete - off, label="Fouries series")
+        plt.plot(x, func(x), label="Original signal")
+        plot_decomposition(decompose(t_inst, q_idx, T), q, plot= True)
+        plt.title("Fourier series reconstruction")
+        plt.xlim(0, xlim)
+        plt.legend()
+        plt.grid()
+
+    return FS_complete, FS_complete- off
 #------------------------------------------------------------
 # Binary encoder
 #------------------------------------------------------------

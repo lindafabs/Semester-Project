@@ -20,22 +20,22 @@ def fourier_analysis(x, fsmp):
     N = len(X)
     n = np.arange(N)
     T = N / fsmp
-    print('T: {}'.format(T))
+    #print('T: {}'.format(T))
     freq = n / T
-    print('freq: {}'.format(freq))
+    #print('freq: {}'.format(freq))
     #freqx = np.fft.fftfreq(len(x), x[1]-x[0])
     return freq, X
 
 
 def fourier_plot(freq, X, freq_lim, title):
-    plt.plot(freq, np.abs(X), 'b')
+    #plt.plot(freq, np.abs(X), 'b')
     plt.stem(freq, np.abs(X), markerfmt='', linefmt='b' )
     plt.xlabel('Freq [Hz]')
     plt.ylabel('FFT Amplitude |X(freq)|')
     plt.xlim(0, freq_lim)
     plt.ylim(0, 1)
     plt.grid()
-    plt.title(title)
+    plt.title(title, fontsize=9)
 
 
 def fourier_plot_db(freq, X, freq_lim, ylim, title):
@@ -45,7 +45,7 @@ def fourier_plot_db(freq, X, freq_lim, ylim, title):
     plt.xlim(0, freq_lim)
     plt.ylim(ylim, 10)
     plt.grid()
-    plt.title(title)
+    plt.title(title, fontsize = 9)
 
 
 def bitmap_plotter(qbits, matrix, time):
@@ -56,7 +56,7 @@ def bitmap_plotter(qbits, matrix, time):
     plt.legend()
     plt.xlabel('Time [s]')
     plt.ylim(0, 6)
-    plt.title('Binary encoding of the quantized signal')
+    plt.title('Binary encoding of the quantized signal', fontsize = 9)
 
 def plot_quantized_all(t_ct, t_smp, y_ct, y_ct_q, y_smp_q, xlimit, ylimit):
     fig = plt.figure(figsize = (10,4))

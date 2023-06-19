@@ -1,48 +1,66 @@
 import numpy as np 
 import scipy as sp 
 from scipy.signal import butter,filtfilt
+import matplotlib.pyplot as plt
 
 
 class FIR_class: 
-
+    # Implements multiple types of filters with filer taps K and time delay Td
     def __init__(self, taps, delay):
         self.K = taps
         self.Td = delay
 
-
-    def movingAvg(self, x, q_sig, corr):
+    def movingAvg(self, x, q_sig):
         '''
-
-        :param x:
-        :param q_sig:
-        :param corr:
-        :return:
+        Moving average filter
+        :param x: time vector
+        :param q_sig: original quantized signal
+        :return: filtered signal
         '''
         y=np.zeros(len(x))
         for k in range(1, self.K):
             a_k = (1/self.K)
             q_delay=np.concatenate((np.zeros( self.Td*k), q_sig[:-k*self.Td]))
             y = y + a_k*q_delay
-        return y
 
-    def hamming(self, x, q_sig, corr):
+        corr = q_sig.max() / y.max() # amplitude correction
+        print(corr)
+        return y*corr
+
+    def hamming(self, x, q_sig):
+        '''
+        Hamming window  filter
+        :param x: time vector
+        :param q_sig: original quantized signal
+        :return: filtered signal
+         '''
         y=np.zeros(len(x))
-        corr = corr / (self.K / 10)
         for k in range(1,self.K):
-            a_k = ( 0.54 - 0.46 * np.cos((2*np.pi*k)/(self.K-1)))*corr
+            a_k = ( 0.54 - 0.46 * np.cos((2*np.pi*k)/(self.K-1)))
             q_delay=np.concatenate((np.zeros(self.Td*k), q_sig[:-k*self.Td]))
    
-            y = y + a_k*q_delay  
-        return y
+            y = y + a_k*q_delay
+
+        corr = q_sig.max()/y.max() # amplitude correction
+        print(corr)
+        return y*corr
     
-    def bartlett(self, x, q_sig, corr):
+    def bartlett(self, x, q_sig):
+        '''
+         Bartlett triangular filter
+         :param x: time vector
+         :param q_sig: original quantized signal
+         :return: filtered signal
+         '''
         y=np.zeros(len(x)-1)
-        corr = corr / (self.K / 10)
         for k in range(1,self.K):
-            a_k = ( (2/self.K) * ((self.K-1)/2 - abs((self.K-1)/2 - k)) )*(corr)
+            a_k = ( (2/self.K) * ((self.K-1)/2 - abs((self.K-1)/2 - k)) )
             q_delay=np.concatenate((np.zeros(self.Td*k-1), q_sig[:-k*self.Td]))
-            y = y + a_k*q_delay  
-        return y
+            y = y + a_k*q_delay
+
+        corr = q_sig.max() / y.max() # amplitude correction
+        print(corr)
+        return y*corr
     
 
 #------------------------------------------------------------
@@ -77,16 +95,42 @@ def low_pass_fir(signal, cutoff_freq, num_taps, f_smp):
 
     return filtered_signal
 
-
-
 #------------------------------------------------------------
 # Filter performance
 #------------------------------------------------------------
 
 def perform(test_sig, og_sig, filter_name):
-
+    '''
+    Calculates the performance of the filter with Means square error and SNR parameters
+    :param test_sig: filtered signal
+    :param og_sig: original signal
+    :param filter_name: type of filter used
+    :return: Mean square error value, SNR value
+    '''
     mse = np.mean((og_sig - test_sig) ** 2)
     snr = 10 * np.log10(np.sum(og_sig ** 2) / np.sum((og_sig- test_sig) ** 2))
 
     print('MSE - {} filter = '.format(filter_name), mse)
     print('SNR - {} filter = '.format(filter_name), snr)
+
+
+def filters_run(filter_type, filter_name, x, q_in,x_smp,q_smp, y_og, y_og_smp):
+    y = filter_type(x, q_in)
+    y_smp = filter_type(x_smp, q_smp)
+
+    # ----------------------------------------------------------
+    plt.figure(figsize=(9, 4))
+    plt.subplot(1, 2, 1)
+    plt.plot(x, y, label='{}'.format(filter_name))
+    plt.plot(x, y_og, label='Original signal')
+    plt.title('{}'.format(filter_name), fontsize=9)
+    plt.legend()
+    plt.subplot(1, 2, 2)
+    plt.plot(x_smp, y_smp, label='{} - smp'.format(filter_name))
+    plt.plot(x_smp, y_og_smp, label='Original signal')
+    plt.title('{} - sampled'.format(filter_name), fontsize=9)
+    plt.legend()
+    # ------------------------------------------------------------
+    perform(y, y_og, '{}'.format(filter_name))
+    perform(y_smp, y_og_smp, '{} - smp'.format(filter_name))
+
