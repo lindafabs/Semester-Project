@@ -12,19 +12,24 @@ def plot_wave(x, y, xlim, ylim, label, col):
     plt.grid()
 
 def fourier_analysis(x, fsmp):
-     # Normalized Fourier transform of simple sine wave
+
+    # Normalized Fourier transform of simple sine wave
     X=np.fft.fft(x)
     X/=np.abs(X).max()
     # Frequency vector
     N = len(X)
     n = np.arange(N)
     T = N / fsmp
+    print('T: {}'.format(T))
     freq = n / T
-    #freq = np.fft.fftfreq(len(x), 1 / fsmp_ct)
+    print('freq: {}'.format(freq))
+    #freqx = np.fft.fftfreq(len(x), x[1]-x[0])
     return freq, X
+
 
 def fourier_plot(freq, X, freq_lim, title):
     plt.plot(freq, np.abs(X), 'b')
+    plt.stem(freq, np.abs(X), markerfmt='', linefmt='b' )
     plt.xlabel('Freq [Hz]')
     plt.ylabel('FFT Amplitude |X(freq)|')
     plt.xlim(0, freq_lim)

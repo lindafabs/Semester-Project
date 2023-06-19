@@ -57,6 +57,7 @@ class quantizer:
         
     def qbin(self, x):
         # return the INDEX of the quantization bin, i.e. an integer in the range [0, M-1]
+
         if np.max(np.abs(x)) > self.clip:
             raise OverflowError
         return (np.floor(x / self.step + 0.5) + self.offset).astype(int)
@@ -126,14 +127,37 @@ def decompose(t, i, T):
 #------------------------------------------------------------
 # Plot decomposition
 #------------------------------------------------------------
-def plot_decomposition(pulses, Q, points=1000):
+def plot_decomposition(pulses, Q, plot, points=1000):
     T = max(list(sum(pulses, ())))
     x = np.zeros(points)
     for p in pulses:
         n = np.round((points / T) * np.array(p)).astype(int)
         x[n[0]:n[1]] += 1
-    plt.plot(np.linspace(0, T, points), Q.qvalue(x), label='Reconstructed quantized')
+    if plot:
+        plt.plot(np.linspace(0, T, points), Q.qvalue(x), label='Reconstructed quantized')
     return Q.qvalue(x)
+
+
+#----------------------------------------------------
+# Fourier Series
+#----------------------------------------------------
+def FS(n, t0,t1, T, t, delta):
+    '''
+    :param n: number of harmonics
+    :param t0: start time instant
+    :param t1: end time instant
+    :param T: signal period
+    :param x: time vector
+    :param delta: step size
+
+    :return: one-sided Fourier sum for one step function
+    '''
+    F=0
+    for i in range(1,n):
+        c = 1/(np.pi*i) * (np.exp(-1j*2*np.pi*i/T*(t0+t1)/2)*np.sin(2*np.pi*i/T*(t1-t0)/2))
+        F_tmp  = delta * c*np.exp(1j*2*np.pi*i*t/T)
+        F = F + F_tmp
+    return F
 
 #------------------------------------------------------------
 # Binary encoder

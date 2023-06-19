@@ -96,7 +96,7 @@ def FS(n, t0,t1, T, t, delta):
 # Pipe-line of amplitude sampler
 #------------------------------------------------------------
 
-def ampSmp_run(t_range,T,q, test_function, plot, f_fft):
+def ampSmp_run(t_range,T,q, test_function, plot, f_fft, xlimit):
 
     t_inst, q_idx = amplitude_sampler(test_function, T, q)
     pulse_times = decompose(t_inst, q_idx, T)
@@ -112,10 +112,11 @@ def ampSmp_run(t_range,T,q, test_function, plot, f_fft):
     offset = FS_complete - plot_decomposition(pulse_times,q, points, plot)
 
     if plot == True:
-        plt.plot(t_range, FS_complete - offset, 'b', label="Fouries series")
+        plt.plot(t_range, FS_complete - offset, 'b', label="Fouries series" )
         plt.plot(t_range, test_function(t_range), 'black', label="Original signal")
-        functions.plot_decomposition(pulse_times, q)
+        #functions.plot_decomposition(pulse_times, q)
         plt.title("Fourier series reconstruction")
+        plt.xlim(0,xlimit)
         plt.legend()
         plt.grid()
         plt.show()
