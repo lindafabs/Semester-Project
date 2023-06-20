@@ -10,9 +10,9 @@ from scipy.optimize import brentq
 #------------------------------------------------------------
 def time_vector(fs, dur):
     '''
-    :param fs: sampling frequency
-    :param dur: duration of the signal
-    :return: time vector
+    # fs : sampling frequency
+    # dur : duration of the signal
+    return: time vector
     '''
     T = 1/fs # sampling period
     t = np.linspace(0,dur, int(np.ceil(dur/T)))
@@ -22,6 +22,7 @@ def time_vector(fs, dur):
 # Class for different types of functions
 #------------------------------------------------------------
 class signals_ex:
+    # collection of multiple basic signals
     def __init__(self, time_vector, signal_frequency):
         self.f = signal_frequency #Hz
         self.t = time_vector
@@ -31,13 +32,12 @@ class signals_ex:
         return amp * np.cos(2 * np.pi * self.f * self.t)
     def sawtooth_sig(self, amp, slope):
         return amp* signal.sawtooth(2 * np.pi * self.f * self.t, slope)
-
     def compound_wave(self, amp1, amp2, f1, f2):
         return amp1 * np.sin(2 * np.pi * self.f1 * self.t) + amp2*np.sin(2 * np.pi * self.f2 * self.t)
 
 
 #------------------------------------------------------------
-# Test functions
+# Test function
 #------------------------------------------------------------
 def test_func(x):
     f0 = 1.2 # Hz
@@ -125,7 +125,7 @@ def decompose(t, i, T):
     return pulses
 
 #------------------------------------------------------------
-# Plot decomposition
+# Plot the decomposition in pulses
 #------------------------------------------------------------
 def plot_decomposition(pulses, Q, plot, points=1000):
     T = max(list(sum(pulses, ())))
@@ -137,20 +137,19 @@ def plot_decomposition(pulses, Q, plot, points=1000):
         plt.plot(np.linspace(0, T, points), Q.qvalue(x), label='Reconstructed quantized')
     return Q.qvalue(x)
 
-
 #----------------------------------------------------
 # Fourier Series
 #----------------------------------------------------
 def FS(n, t0,t1, T, t, delta):
     '''
-    :param n: number of harmonics
-    :param t0: start time instant
-    :param t1: end time instant
-    :param T: signal period
-    :param x: time vector
-    :param delta: step size
+    # n: number of harmonics
+    # t0: start time instant
+    # t1: end time instant
+    # T: signal period
+    # x: time vector
+    # delta: step size
 
-    :return: one-sided Fourier sum for one step function
+    return one-sided Fourier sum for one step function
     '''
     F=0
     for i in range(1,n):
@@ -164,7 +163,16 @@ def FS(n, t0,t1, T, t, delta):
 # Run amplitude sampler
 #------------------------------------------------------------
 def amp_smp(func, T, q, xlim, k, plot):
+    '''
+    # func : sample function
+    # T : function period
+    # q : quantizer
+    # xlim : x axis plot limit
+    # k : number of Fourier series harmonics
+    # plot : boolean to show the plot
 
+    return: plot of the Fourier series reconstruction
+    '''
 
     t_inst, q_idx = amplitude_sampler(func, T, q)
     pulse_times = decompose(t_inst, q_idx, T)
@@ -203,7 +211,12 @@ class binary_encoder:
             binary_list.append(binary_str)
 
         return binary_list
-    def bit_extract(bi_list, bit_pos ):
+    def bit_extract(bi_list, bit_pos):
+        '''
+        # bit_pos: position of the extracted bit
+        return: single bit sequence
+        '''
+        # extract single bit from binary number
         return  [bits[bit_pos] for bits in bi_list]
 
 

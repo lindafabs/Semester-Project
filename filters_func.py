@@ -9,7 +9,6 @@ class FIR_class:
     def __init__(self, taps, delay):
         self.K = taps
         self.Td = delay
-
     def movingAvg(self, x, q_sig):
         '''
         Moving average filter
@@ -22,11 +21,8 @@ class FIR_class:
             a_k = (1/self.K)
             q_delay=np.concatenate((np.zeros( self.Td*k), q_sig[:-k*self.Td]))
             y = y + a_k*q_delay
-
         corr = q_sig.max() / y.max() # amplitude correction
-        print(corr)
         return y*corr
-
     def hamming(self, x, q_sig):
         '''
         Hamming window  filter
@@ -38,13 +34,10 @@ class FIR_class:
         for k in range(1,self.K):
             a_k = ( 0.54 - 0.46 * np.cos((2*np.pi*k)/(self.K-1)))
             q_delay=np.concatenate((np.zeros(self.Td*k), q_sig[:-k*self.Td]))
-   
             y = y + a_k*q_delay
-
         corr = q_sig.max()/y.max() # amplitude correction
         print(corr)
         return y*corr
-    
     def bartlett(self, x, q_sig):
         '''
          Bartlett triangular filter
@@ -57,11 +50,142 @@ class FIR_class:
             a_k = ( (2/self.K) * ((self.K-1)/2 - abs((self.K-1)/2 - k)) )
             q_delay=np.concatenate((np.zeros(self.Td*k-1), q_sig[:-k*self.Td]))
             y = y + a_k*q_delay
-
         corr = q_sig.max() / y.max() # amplitude correction
         print(corr)
         return y*corr
-    
+
+
+#------------------------------------------------------------
+# Finds bins height
+#------------------------------------------------------------
+def find_bin_interval(t_list, t, T, bin_h):
+    '''
+    # t_list : list of transition instants
+    # t : time instant
+    # T: duration of the signal
+    # bin_h: list of the height of the quantized bins
+    :return: the height of the bin for the specific time instant
+    '''
+    for i in range(1, len(t_list)):
+        if t<=t_list[i] and t>=t_list[i-1]:
+            return bin_h[i-1]
+        if t>=t_list[-1] and t<=T:
+            return bin_h[-1]
+#------------------------------------------------------------
+# Moving average 2 samples
+#------------------------------------------------------------
+def movingAvg_2(delta, time, transition_inst, bins_heights, K,T):
+    '''
+    # deltaT: time shift
+    # time: time vector
+    # t_inst: transitions instant
+    # bins_height: height of the bins
+    # k: window size
+    :return: filtered signal
+    '''
+    filter_out = []
+    for k in range(1,K):
+        if delta*k > time.max():
+            break
+        tn = k*delta
+        tminus = k*delta - delta
+        level_n = find_bin_interval(t_inst, tn, T, bins_heights)
+        level_minus = find_bin_interval(t_inst, tminus, T, bins_heights)
+        filter_out.append((level_n+level_minus)/2)
+    return filter_out
+
+#------------------------------------------------------------
+# Moving average W window taps
+#------------------------------------------------------------
+def movingAvg(delta, time, transition_inst, bins_heights,Td, K, W, T):
+    '''
+    # delta : window delay
+    # time : time vector
+    # transition_inst : transitions instant
+    # bins_heights : height of the bins
+    # Td : filter delay
+    # K : filter taps
+    # W : window taps
+    # T : signal duration
+    :return: filtered signal
+    '''
+    filter_out = []
+    for k in range(1,K):
+        if Td*k > time.max():
+            break
+        tn = Td*k # current time instant
+        level_n = find_bin_interval(transition_inst, tn, T, bins_heights)
+        window_sum = level_n
+        for w in range(1,W+1):
+            tmp = tn-w*delta # shift time instants in the window
+            level_tmp = find_bin_interval(transition_inst, tmp, T, bins_heights)
+            window_sum += level_tmp
+        window_sum = window_sum/W # average sum
+        filter_out.append(window_sum)
+    return filter_out
+
+#------------------------------------------------------------
+# Hamming window
+#------------------------------------------------------------
+def Hamming(delta, time, transition_inst, bins_heights,Td, K, W, T):
+    '''
+    # delta : window delay
+    # time : time vector
+    # transition_inst : transitions instant
+    # bins_heights : height of the bins
+    # Td : filter delay
+    # K : filter taps
+    # W : window taps
+    # T : signal duration
+    :return: filtered signal
+    '''
+
+    filter_out = []
+    for k in range(1,K):
+        if Td*k > time.max():
+            break
+        tn = Td*k
+        level_n = find_bin_interval(transition_inst, tn, T, bins_heights)
+        window_sum = level_n
+        for w in range(1,W+1):
+            a_w= ( 0.54 - 0.46 * np.cos((2*np.pi*w)/(W-1)))
+            tmp = tn-w*delta
+            level_tmp = find_bin_interval(transition_inst, tmp, T, bins_heights)
+            window_sum += level_tmp*a_w
+        window_sum = window_sum/W
+        filter_out.append(window_sum)
+    return filter_out
+
+#------------------------------------------------------------
+# Bartlett triangular filter
+#------------------------------------------------------------
+def Bartlett(delta, time, transition_inst, bins_heights,Td, K, W, T):
+    '''
+    # delta : window delay
+    # time : time vector
+    # transition_inst : transitions instant
+    # bins_heights : height of the bins
+    # Td : filter delay
+    # K : filter taps
+    # W : window taps
+    # T : signal duration
+    :return: filtered signal
+    '''
+    filter_out = []
+    for k in range(1,K):
+        if Td*k > time.max():
+            break
+        tn = Td*k
+        level_n = find_bin_interval(transition_inst, tn, T, bins_heights)
+        window_sum = level_n
+        for w in range(1,W+1):
+            a_w= ( (2/W) * ((W-1)/2 - abs((W-1)/2 - w)) )
+            tmp = tn-w*delta
+            level_tmp = find_bin_interval(transition_inst, tmp, T, bins_heights)
+            window_sum += level_tmp*a_w
+        window_sum = window_sum
+        filter_out.append(window_sum)
+    return filter_out
 
 #------------------------------------------------------------
 # Butterworth filter
