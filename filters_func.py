@@ -2,7 +2,7 @@ import numpy as np
 import scipy as sp 
 from scipy.signal import butter,filtfilt
 import matplotlib.pyplot as plt
-
+import utils
 
 class FIR_class: 
     # Implements multiple types of filters with filer taps K and time delay Td
@@ -107,17 +107,14 @@ def perform(test_sig, og_sig, filter_name):
     :param filter_name: type of filter used
     :return: Mean square error value, SNR value
     '''
-    mse = np.mean((og_sig - test_sig) ** 2)
-    snr = 10 * np.log10(np.sum(og_sig ** 2) / np.sum((og_sig- test_sig) ** 2))
+    mse = np.abs(np.mean((og_sig - test_sig) ** 2))
+    snr = np.abs(10 * np.log10(np.sum(og_sig ** 2) / np.sum((og_sig- test_sig) ** 2)))
 
     print('MSE - {} filter = '.format(filter_name), mse)
     print('SNR - {} filter = '.format(filter_name), snr)
 
 
-def filters_run(filter_type, filter_name, x, q_in,x_smp,q_smp, y_og, y_og_smp):
-    y = filter_type(x, q_in)
-    y_smp = filter_type(x_smp, q_smp)
-
+def filters_plot(filter_name, x, y,x_smp,y_smp, y_og, y_og_smp):
     # ----------------------------------------------------------
     plt.figure(figsize=(9, 4))
     plt.subplot(1, 2, 1)
@@ -134,3 +131,10 @@ def filters_run(filter_type, filter_name, x, q_in,x_smp,q_smp, y_og, y_og_smp):
     perform(y, y_og, '{}'.format(filter_name))
     perform(y_smp, y_og_smp, '{} - smp'.format(filter_name))
 
+def filters_plot_fourier(freq_FS, X_FS, freq_FS_smp, X_FS_smp, freq_limit, fir_name):
+    plt.figure(figsize=(8, 4))
+    plt.subplot(1, 2, 1)
+    utils.fourier_plot(freq_FS, X_FS, freq_lim=freq_limit, title="Frequency spectrum of {}".format(fir_name))
+    plt.subplot(1, 2, 2)
+    utils.fourier_plot(freq_FS_smp, X_FS_smp, freq_lim=freq_limit, title=f"Frequency spectrum of {fir_name}- smp".format(fir_name))
+    plt.tight_layout()
