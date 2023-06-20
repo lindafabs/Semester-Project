@@ -6,7 +6,10 @@ Continuous-Time Digital Signal Processing is a signal processing paradigm that a
 and reduction of quantization error. It has been shown how this method can be achieved with “event-driven” control systems using level-crossing sampling, amplitude quantization and input signal decomposition. [1] [2] [3] In particular, since it was shown that the continuous-time discretization can be described in terms of FIR- IIR-like filters, an exploration of this method can be done in the domain of Convolutional Neural Networks, exploiting the FIR filter nature of said nets.
 
 The repository is organized as follows: 
-- [Here](https://github.com/lindafabs/Semester_Project/edit/main/README.md) you can find the Jupyter notebook for the complete and descriptive summary of the project #Update
+- [Here](https://github.com/lindafabs/Semester_Project/blob/main/Final_notebook.ipynb) you can find the Jupyter notebook for the complete and descriptive summary of the project 
+- [Quantization_contd](https://github.com/lindafabs/Semester_Project/blob/main/quantization_contd.ipynb) contains additional tests for section 1
+- [Amplitude_sampling_contd](https://github.com/lindafabs/Semester_Project/blob/main/amplituteSampling_contd.ipynb) contains additional tests for section 3
+- [FIR_contd](https://github.com/lindafabs/Semester_Project/blob/main/FIR_contd.ipynb) contains additional tests for sections 4
 
 
 ### Student and Advisors
