@@ -185,7 +185,7 @@ def amp_smp(func, T, q, xlim, k, plot):
         plt.legend()
         plt.grid()
 
-    return FS_complete, FS_complete- off
+    return FS_complete, FS_complete - off
 #------------------------------------------------------------
 # Binary encoder
 #------------------------------------------------------------
