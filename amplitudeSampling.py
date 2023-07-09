@@ -117,7 +117,7 @@ def ampSmp_run(t_range,T,q, test_function, plot, f_fft, xlimit):
         #functions.plot_decomposition(pulse_times, q)
         plt.title("Fourier series reconstruction")
         plt.xlim(0,xlimit)
-        plt.legend()
+        plt.legend();
         plt.grid()
         plt.show()
 

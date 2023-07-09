@@ -12,8 +12,8 @@ class FIR_class:
     def movingAvg(self, x, q_sig):
         '''
         Moving average filter
-        :param x: time vector
-        :param q_sig: original quantized signal
+        # x: time vector
+        # q_sig: original quantized signal
         :return: filtered signal
         '''
         y=np.zeros(len(x))
@@ -23,11 +23,28 @@ class FIR_class:
             y = y + a_k*q_delay
         corr = q_sig.max() / y.max() # amplitude correction
         return y*corr
+
+    def movingAvg_buffer(self, q_sig, w):
+        '''
+        :param window_size: size of the window
+        :return: filtered signal
+        '''
+        buffer = np.zeros(w)
+        output_signal = np.zeros(len(q_sig))
+        center_index = w // 2
+
+        for i in range(len(q_sig)):
+            buffer[i % w] = q_sig[i]
+            average = np.mean(buffer)
+            output_signal[i] = average
+            buffer = np.roll(buffer, -1)
+        return output_signal
+
     def hamming(self, x, q_sig):
         '''
         Hamming window  filter
-        :param x: time vector
-        :param q_sig: original quantized signal
+        # x: time vector
+        # q_sig: original quantized signal
         :return: filtered signal
          '''
         y=np.zeros(len(x))
@@ -36,13 +53,12 @@ class FIR_class:
             q_delay=np.concatenate((np.zeros(self.Td*k), q_sig[:-k*self.Td]))
             y = y + a_k*q_delay
         corr = q_sig.max()/y.max() # amplitude correction
-        print(corr)
         return y*corr
     def bartlett(self, x, q_sig):
         '''
          Bartlett triangular filter
-         :param x: time vector
-         :param q_sig: original quantized signal
+         # x: time vector
+         # q_sig: original quantized signal
          :return: filtered signal
          '''
         y=np.zeros(len(x)-1)
@@ -245,12 +261,12 @@ def filters_plot(filter_name, x, y,x_smp,y_smp, y_og, y_og_smp):
     plt.plot(x, y, label='{}'.format(filter_name))
     plt.plot(x, y_og, label='Original signal')
     plt.title('{}'.format(filter_name), fontsize=9)
-    plt.legend()
+    plt.legend();
     plt.subplot(1, 2, 2)
     plt.plot(x_smp, y_smp, label='{} - smp'.format(filter_name))
     plt.plot(x_smp, y_og_smp, label='Original signal')
     plt.title('{} - sampled'.format(filter_name), fontsize=9)
-    plt.legend()
+    plt.legend();
     # ------------------------------------------------------------
     perform(y, y_og, '{}'.format(filter_name))
     perform(y_smp, y_og_smp, '{} - smp'.format(filter_name))

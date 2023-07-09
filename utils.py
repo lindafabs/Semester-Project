@@ -73,7 +73,7 @@ def fourier_plot_db(freq, X, freq_lim, ylim, title):
 
     :return: plot in dB scale
     '''
-    plt.plot(freq, 20*np.log10(np.abs(X)), 'b')
+    plt.plot(freq, 20*np.log10(np.abs(X)))
     plt.xlabel('Freq [Hz]')
     plt.ylabel('FFT Amplitude [dB]')
     plt.xlim(0, freq_lim)
@@ -94,7 +94,7 @@ def bitmap_plotter(qbits, matrix, time):
         plt.plot(time, matrix[i, :] + 2 * i, label='Bit idx: {}'.format(i))
     y_tick_labels = ['0', '1', '0', '1', '0', '1']
     plt.yticks([0, 1, 2, 3, 4, 5], y_tick_labels)
-    plt.legend()
+    plt.legend();
     plt.xlabel('Time [s]')
     plt.ylim(0, 6)
     plt.title('Binary encoding of the quantized signal', fontsize = 9)
@@ -119,7 +119,7 @@ def plot_quantized_all(t_ct, t_smp, y_ct, y_ct_q, y_smp_q, xlimit, ylimit):
     plot_wave(t_ct, y_ct_q, xlimit, ylim=ylimit,label='Quantized signal',col='g' )
     plot_wave(t_smp, y_smp_q, xlimit, ylim=ylimit,label='Quantized + sampled signal',col='r' )
     plt.title('Continuous time signal quantization',fontsize = 9)
-    plt.legend()
+    plt.legend();
 
 def plot_fourier_three(freq_ct, X_ct, freq_q, X_q,  f_lim, freq_smp_q, X_smp_q):
     '''

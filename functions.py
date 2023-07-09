@@ -134,7 +134,7 @@ def plot_decomposition(pulses, Q, plot, points=1000):
         n = np.round((points / T) * np.array(p)).astype(int)
         x[n[0]:n[1]] += 1
     if plot:
-        plt.plot(np.linspace(0, T, points), Q.qvalue(x), label='Reconstructed quantized')
+        plt.plot(np.linspace(0, T, points), Q.qvalue(x), 'g', label='Reconstructed quantized')
     return Q.qvalue(x)
 
 #----------------------------------------------------
@@ -190,7 +190,7 @@ def amp_smp(func, T, q, xlim, k, plot):
         plot_decomposition(decompose(t_inst, q_idx, T), q, plot= True)
         plt.title("Fourier series reconstruction")
         plt.xlim(0, xlim)
-        plt.legend()
+        plt.legend();
         plt.grid()
 
     return FS_complete, FS_complete - off
