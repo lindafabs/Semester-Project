@@ -17,6 +17,12 @@ Student: Linda Fabiani\
 Supervisor: Paolo Prandoni - LCAV (paolo.prandoni@epfl.ch)\
 Scientific Assistant Contacts: Pablo Martinez-Nuevo (B&O) PMN@bang-olufsen.dk, Martin Bo Møller (B&O) MIM@Bang-Olufsen.dk
 
+### Future work 
+This project allowed for an initial investigation on the behaviour of amplitude quantizers and recontruction by means of digital simulations, but due to the limited time imposed by the proposed workload, this was completed leaving with various open questions to continue the work:
+- Look further into more sophisticated methods for the [amplitude quantization process](https://ri.conicet.gov.ar/bitstream/handle/11336/148666/CONICET_Digital_Nro.3e2dd890-9ba0-4266-8b36-3ca688cf935d_A.pdf).
+- as suggested from the original idea, see how the FIR system proposed in the paper can be exploited and applied in the setting of convolutional neural network.
+- investigation on the hardware size of the experiment, with more focus on the circuitry components rather than digital simulation. 
+
 ### References
 [1] Y. Tsividis, " Continuous-time digital signal processing.," Electronics Letters, pp. 39(21), p.1., 2003\
 [2] Y. Tsividis, "Event-driven data acquisition and continuous-time digital signal processing," IEEE Custom Integrated Circuits Conference 2010, pp. (pp. 1-8),
