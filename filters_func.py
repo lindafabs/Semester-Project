@@ -149,37 +149,34 @@ def movingAvg_2(delta, time, transition_inst, bins_heights, K,T):
 #------------------------------------------------------------
 # Moving average W window taps
 #------------------------------------------------------------
-def movingAvg(delta, time, transition_inst, bins_heights,Td, K, W, T):
+def movingAvg(time, transition_inst, bins_heights,Td,W, T):
     '''
-    # delta : window delay
     # time : time vector
     # transition_inst : transitions instant
     # bins_heights : height of the bins
     # Td : filter delay
-    # K : filter taps
     # W : window taps
     # T : signal duration
     :return: filtered signal
     '''
     filter_out = []
-    for k in range(1,K):
-        if Td*k > time.max():
-            break
-        tn = Td*k # current time instant
-        level_n = find_bin_interval(transition_inst, tn, T, bins_heights)
-        window_sum = level_n
-        for w in range(1,W+1):
-            tmp = tn-w*delta # shift time instants in the window
+    tn = Td #starting time
+    while tn < time.max() + Td:
+        window_sum = 0
+        for w in range(0,W):
+            tmp = tn-w*Td # shift time instants in the window
             level_tmp = find_bin_interval(transition_inst, tmp, T, bins_heights)
+            if tmp<0 or tmp > time.max():
+                level_tmp = 0
             window_sum += level_tmp
         window_sum = window_sum/W # average sum
         filter_out.append(window_sum)
+        tn= tn+Td
     return filter_out
-
 #------------------------------------------------------------
 # Hamming window
 #------------------------------------------------------------
-def Hamming(delta, time, transition_inst, bins_heights,Td, K, W, T):
+def Hamming(time, transition_inst, bins_heights,Td, W, T):
     '''
     # delta : window delay
     # time : time vector
@@ -191,54 +188,48 @@ def Hamming(delta, time, transition_inst, bins_heights,Td, K, W, T):
     # T : signal duration
     :return: filtered signal
     '''
-
     filter_out = []
-    for k in range(1,K):
-        if Td*k > time.max():
-            break
-        tn = Td*k
-        level_n = find_bin_interval(transition_inst, tn, T, bins_heights)
-        window_sum = level_n
-        for w in range(1,W+1):
+    tn = Td #starting time
+    while tn < time.max() + Td:
+        window_sum = 0
+        for w in range(0,W):
             a_w= ( 0.54 - 0.46 * np.cos((2*np.pi*w)/(W-1)))
-            tmp = tn-w*delta
+            tmp = tn-w*Td # shift time instants in the window
             level_tmp = find_bin_interval(transition_inst, tmp, T, bins_heights)
+            if tmp<0 or tmp > time.max():
+                level_tmp = 0
             window_sum += level_tmp*a_w
-        window_sum = window_sum/W
         filter_out.append(window_sum)
+        tn = tn+Td
     return filter_out
 
 #------------------------------------------------------------
 # Bartlett triangular filter
 #------------------------------------------------------------
-def Bartlett(delta, time, transition_inst, bins_heights,Td, K, W, T):
+def Bartlett(time, transition_inst, bins_heights,Td,W,T):
     '''
-    # delta : window delay
     # time : time vector
     # transition_inst : transitions instant
     # bins_heights : height of the bins
     # Td : filter delay
-    # K : filter taps
     # W : window taps
     # T : signal duration
     :return: filtered signal
     '''
     filter_out = []
-    for k in range(1,K):
-        if Td*k > time.max():
-            break
-        tn = Td*k
-        level_n = find_bin_interval(transition_inst, tn, T, bins_heights)
-        window_sum = level_n
-        for w in range(1,W+1):
+    tn = Td #starting time
+    while tn < time.max() + Td:
+        window_sum = 0
+        for w in range(0,W):
             a_w= ( (2/W) * ((W-1)/2 - abs((W-1)/2 - w)) )
-            tmp = tn-w*delta
+            tmp = tn-w*Td
             level_tmp = find_bin_interval(transition_inst, tmp, T, bins_heights)
+            if tmp<0 or tmp > time.max():
+                level_tmp = 0
             window_sum += level_tmp*a_w
-        window_sum = window_sum
         filter_out.append(window_sum)
+        tn = tn + Td
     return filter_out
-
 #------------------------------------------------------------
 # Butterworth filter
 #------------------------------------------------------------

@@ -132,4 +132,29 @@ def ampSmp_run(t_range,T,q, test_function, plot, f_fft, xlimit):
 
     return offset
 
+#-------------------------------------------------
+# Amplitude sampling pipeline
+#-------------------------------------------------
+def amp_smp(func, T, q, xlim, k, plot):
 
+
+    t_inst, q_idx = functions.amplitude_sampler(func, T, q)
+    pulse_times = functions.decompose(t_inst, q_idx, T)
+    x = np.linspace(0, T, 1000)  # time vector
+
+    FS_complete = 0
+    for i in range(len(pulse_times)):
+        F_tmp = functions.FS(k, pulse_times[i][0], pulse_times[i][1], T, x, q.step * 2)
+        FS_complete = FS_complete + F_tmp
+    #----------------------------------------------------------------
+    off = np.real(FS_complete) - q.quantize(func(x))
+    if plot:
+        plt.plot(x, FS_complete - off, 'orange', label="Fouries series")
+        plt.plot(x, func(x),'b', label="Original signal")
+        functions.plot_decomposition(functions.decompose(t_inst, q_idx, T), q, plot= True)
+        plt.title("Fourier series reconstruction")
+        plt.xlim(0, xlim)
+        plt.legend();
+        plt.grid()
+
+    return FS_complete, FS_complete- off

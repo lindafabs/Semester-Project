@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import scipy as sp
 from scipy import signal
 from scipy.optimize import brentq
-
+import utils
 
 #------------------------------------------------------------
 # Time vector
@@ -219,7 +219,35 @@ class binary_encoder:
         # extract single bit from binary number
         return  [bits[bit_pos] for bits in bi_list]
 
+#-------------------------------------------------------
+# Quantization + sampling pipeline
+#-------------------------------------------------------
+def q_and_smp(f_ct, f_smp, f_wave, duration, gen_func, q, sample, plot, fourier):
 
+    t_ct= time_vector(f_ct, duration)
+    t_smp= time_vector(f_smp, duration)
 
+    y_ct = gen_func(t_ct)
+    y_smp = gen_func(t_smp)
+
+    y_ct_q = q.quantize(y_ct)
+    y_smp_q =  q.quantize(y_smp)
+
+    if plot:
+        xlimit = 2/f_wave;
+        ylimit= y_ct.max() + 0.5
+        utils.plot_quantized_all(t_ct, t_smp, y_ct, y_ct_q, y_smp_q, xlimit, ylimit)
+
+    if fourier:
+        f_lim = f_wave*5
+        freq_ct, X_ct = utils.fourier_analysis(y_ct, f_wave*100)
+        freq_q, X_q = utils.fourier_analysis(y_ct_q, f_wave*100)
+        freq_smp_q, X_smp_q = utils.fourier_analysis(q.quantize(y_smp_q), f_wave*100)
+        utils.plot_fourier_three(freq_ct, X_ct, freq_q, X_q,  f_lim, freq_smp_q, X_smp_q)
+
+    if sample:
+        return y_ct_q, y_smp_q
+    elif sample == False:
+        return y_ct
 
 
