@@ -52,8 +52,28 @@ class FIR_class:
             a_k = ( 0.54 - 0.46 * np.cos((2*np.pi*k)/(self.K-1)))
             q_delay=np.concatenate((np.zeros(self.Td*k), q_sig[:-k*self.Td]))
             y = y + a_k*q_delay
-        corr = q_sig.max()/y.max() # amplitude correction
-        return y*corr
+        return y
+
+    def hamming_buffer(self, q_sig, w):
+        '''
+        Hamming window  filter
+        # w: window size
+        # q_sig: original quantized signal
+        :return: filtered signal
+         '''
+        buffer = np.zeros(w)
+        output_signal = np.zeros(len(q_sig))
+        center_index = w // 2
+
+        for i in range(len(q_sig)):
+            buffer[i % w] = q_sig[i]
+            hamming_window = np.hamming(w)
+            filtered_sample = np.sum(buffer * hamming_window)
+            filtered_sample /= np.sum(hamming_window)
+            output_signal[i] = filtered_sample
+            buffer = np.roll(buffer, -1)
+        return output_signal
+
     def bartlett(self, x, q_sig):
         '''
          Bartlett triangular filter
@@ -66,11 +86,27 @@ class FIR_class:
             a_k = ( (2/self.K) * ((self.K-1)/2 - abs((self.K-1)/2 - k)) )
             q_delay=np.concatenate((np.zeros(self.Td*k-1), q_sig[:-k*self.Td]))
             y = y + a_k*q_delay
-        corr = q_sig.max() / y.max() # amplitude correction
-        print(corr)
-        return y*corr
+        return y
 
+    def bartlett_buffer(self, q_sig, w):
+        '''
+        Hamming window  filter
+        # w: window size
+        # q_sig: original quantized signal
+        :return: filtered signal
+         '''
+        buffer = np.zeros(w)
+        output_signal = np.zeros(len(q_sig))
+        center_index = w // 2
 
+        for i in range(len(q_sig)):
+            buffer[i % w] = q_sig[i]
+            bartlett_window = np.bartlett(w)
+            filtered_sample = np.sum(buffer * bartlett_window)
+            filtered_sample /= np.sum(bartlett_window)
+            output_signal[i] = filtered_sample
+            buffer = np.roll(buffer, -1)
+        return output_signal
 #------------------------------------------------------------
 # Finds bins height
 #------------------------------------------------------------
